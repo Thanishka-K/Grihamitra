@@ -1,88 +1,43 @@
-import { useState } from 'react';
-
-const HomeView = ({ setActiveTab }) => {
-  // Add a local state just to track which language button is clicked
-  const [activeLang, setActiveLang] = useState('EN');
-
+const HomeView = ({ setActiveTab, lang, setLang, t }) => {
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-      
-      {/* Header Box */}
-      <div style={{ border: '4px solid black', padding: '16px', backgroundColor: 'white' }}>
-        <h1 style={{ fontSize: '22px', fontWeight: '900', color: '#1e3a8a', margin: '0 0 4px 0' }}>
-          GRIHA-MITRA
-        </h1>
-        <p style={{ fontSize: '11px', fontWeight: '800', color: '#0d9488', margin: 0, textTransform: 'uppercase' }}>
-          COMPANION
-        </p>
+    <div className="block">
+      <div className="brutal-box p-4 flex justify-between items-center mb-6">
+        <div>
+          <h1 className="font-extrabold text-xl text-blue-900 tracking-tight">{t.app_title}</h1>
+          <p className="text-teal-600 text-xs font-bold uppercase tracking-wider">{t.companion}</p>
+        </div>
       </div>
 
-      {/* Global Language Box */}
-      <div style={{ border: '4px solid black', padding: '16px', backgroundColor: 'white' }}>
-        <p style={{ fontSize: '11px', fontWeight: '900', margin: '0 0 12px 0', display: 'flex', alignItems: 'center', gap: '6px' }}>
-          <span>🌐</span> GLOBAL LANGUAGE
+      <div className="brutal-box p-3 border-2 border-black">
+        <p className="text-xs font-bold mb-2 flex items-center gap-1">
+          <i className="fa-solid fa-globe"></i> <span>{t.global_lang}</span>
         </p>
-        <div style={{ display: 'flex', gap: '6px' }}>
-          {['EN', 'HI', 'BN', 'TE', 'KN'].map((l) => (
+        <div className="flex justify-between gap-1">
+          {['en', 'hi', 'bn', 'te', 'kn', 'ta', 'ml'].map((l) => (
             <button 
               key={l}
-              onClick={() => setActiveLang(l)} // This makes the button clickable
-              style={{
-                flex: 1, padding: '6px 0',
-                backgroundColor: activeLang === l ? '#1e3a8a' : 'white', // Highlights the active one
-                color: activeLang === l ? 'white' : 'black',
-                border: '2px solid black',
-                fontWeight: '900', fontSize: '12px',
-                cursor: 'pointer'
-              }}
+              onClick={() => setLang(l)} 
+              className={`lang-btn brutal-btn text-xs px-2 py-2 flex-1 font-bold ${lang === l ? 'bg-blue-900 text-white' : 'bg-white text-black'}`}
             >
-              {l}
+              {l.toUpperCase()}
             </button>
           ))}
         </div>
       </div>
 
-      {/* AI Appliance Center Box */}
-      <div 
-        onClick={() => setActiveTab('appliance')}
-        style={{ border: '4px solid black', padding: '20px 16px', backgroundColor: 'white', cursor: 'pointer' }}
-      >
-        <h2 style={{ fontSize: '16px', fontWeight: '900', color: '#1e3a8a', margin: '0 0 4px 0' }}>
-          AI APPLIANCE CENTER
-        </h2>
-        <p style={{ fontSize: '10px', fontWeight: '800', color: '#6b7280', margin: 0 }}>
-          MODELS, REPAIRS & GUIDES
-        </p>
+      <div className="brutal-box p-5 mt-4 cursor-pointer" onClick={() => setActiveTab('appliance')}>
+        <h2 className="font-bold text-lg text-blue-900">{t.nav_appliance}</h2>
+        <p className="text-xs text-gray-500 font-semibold uppercase">{t.appliance_desc}</p>
       </div>
-
-      {/* Translator Box */}
-      <div 
-        onClick={() => setActiveTab('talk')}
-        style={{ border: '4px solid black', padding: '20px 16px', backgroundColor: '#fbbf24', cursor: 'pointer' }}
-      >
-        <h2 style={{ fontSize: '16px', fontWeight: '900', color: 'black', margin: '0 0 4px 0' }}>
-          TRANSLATOR
-        </h2>
-        <p style={{ fontSize: '10px', fontWeight: '800', color: 'black', margin: 0 }}>
-          ENGLISH TO LOCAL LANGUAGES
-        </p>
+      <div className="brutal-box p-5 bg-yellow-400 cursor-pointer" onClick={() => setActiveTab('translator')}>
+        <h2 className="font-bold text-lg text-black">{t.nav_translator}</h2>
+        <p className="text-xs text-black font-semibold uppercase">{t.translator_desc}</p>
       </div>
-
-      {/* Job Ledger Box */}
-      <div 
-        onClick={() => setActiveTab('ledger')}
-        style={{ border: '4px solid black', padding: '20px 16px', backgroundColor: '#1e3a8a', cursor: 'pointer' }}
-      >
-        <h2 style={{ fontSize: '16px', fontWeight: '900', color: 'white', margin: '0 0 4px 0' }}>
-          JOB LEDGER
-        </h2>
-        <p style={{ fontSize: '10px', fontWeight: '800', color: '#d1d5db', margin: 0 }}>
-          TRACK WORK & EARNINGS
-        </p>
+      <div className="brutal-box p-5 bg-blue-900 cursor-pointer" onClick={() => setActiveTab('ledger')}>
+        <h2 className="font-bold text-lg text-white">{t.nav_ledger}</h2>
+        <p className="text-xs text-gray-300 font-semibold uppercase">{t.ledger_desc}</p>
       </div>
-
     </div>
   );
 };
-
 export default HomeView;

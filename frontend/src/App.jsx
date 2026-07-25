@@ -3,59 +3,45 @@ import HomeView from './views/HomeView';
 import ApplianceView from './views/ApplianceView';
 import TranslatorView from './views/TranslatorView';
 import LedgerView from './views/LedgerView';
+import { dictionary, languageMap } from './translations';
 
 function App() {
   const [activeTab, setActiveTab] = useState('home');
+  const [lang, setLang] = useState('en');
+  
+  const t = dictionary[lang] || dictionary['en'];
 
   return (
-    <div style={{ backgroundColor: '#f3f4f6', minHeight: '100vh', display: 'flex', justifyContent: 'center' }}>
-      
-      {/* Mobile Container bounds */}
-      <div style={{ 
-        width: '100%', maxWidth: '420px', backgroundColor: 'white', 
-        borderLeft: '4px solid black', borderRight: '4px solid black',
-        display: 'flex', flexDirection: 'column', boxSizing: 'border-box'
-      }}>
+    <div className="flex justify-center items-center h-screen m-0 relative bg-gray-100">
+      <div className="w-full max-w-[400px] h-full max-h-[850px] bg-white border-[4px] border-black flex flex-col relative overflow-hidden shadow-2xl">
         
-        {/* Main Content Area */}
-        <div style={{ flex: 1, padding: '16px', overflowY: 'auto' }}>
-          {activeTab === 'home' && <HomeView setActiveTab={setActiveTab} />}
-          {activeTab === 'appliance' && <ApplianceView />}
-          {activeTab === 'talk' && <TranslatorView />}
-          {activeTab === 'ledger' && <LedgerView />}
+        <div className="flex-1 overflow-y-auto no-scrollbar p-4 bg-gray-50 pb-20">
+          {activeTab === 'home' && <HomeView setActiveTab={setActiveTab} lang={lang} setLang={setLang} t={t} />}
+          {activeTab === 'appliance' && <ApplianceView t={t} lang={lang} />}
+          {activeTab === 'translator' && <TranslatorView t={t} lang={lang} languageMap={languageMap} />}
+          {activeTab === 'ledger' && <LedgerView t={t} lang={lang} />}
         </div>
 
-        {/* Clean Copyright Line */}
-        <div style={{ textAlign: 'center', padding: '12px', fontSize: '10px', fontWeight: '800', color: 'black', backgroundColor: 'white' }}>
-           © 2026 Thanishka-K, Uma & Tanush. All rights reserved.
+        <div className="text-center p-2 text-[10px] font-bold text-gray-500 bg-white">
+          © 2027 Thanishka-K, Uma & Tanush. All rights reserved.
         </div>
 
-        {/* Bottom Navigation */}
-        <div style={{ display: 'flex', borderTop: '4px solid black', backgroundColor: 'white' }}>
-          {['home', 'appliance', 'talk', 'ledger'].map((tab) => {
-            const isSelected = activeTab === tab;
+        <div className="absolute bottom-0 w-full bg-white border-t-[4px] border-black flex h-[70px] z-40">
+          {['home', 'appliance', 'translator', 'ledger'].map((tab) => {
+            const isHome = tab === 'home';
+            const icon = isHome ? 'fa-house' : tab === 'appliance' ? 'fa-plug' : tab === 'translator' ? 'fa-walkie-talkie' : 'fa-book';
+            const labelKey = isHome ? 'nav_home' : `nav_${tab}`;
+            
             return (
-              <button 
+              <div 
                 key={tab}
-                onClick={() => setActiveTab(tab)} 
-                style={{ 
-                  flex: 1, padding: '12px 0', 
-                  borderRight: tab !== 'ledger' ? '2px solid black' : 'none', 
-                  borderBottom: 'none', borderTop: 'none', borderLeft: 'none',
-                  fontWeight: '900', fontSize: '10px', textTransform: 'uppercase',
-                  backgroundColor: isSelected ? '#0d9488' : 'white', // Teal when active
-                  color: isSelected ? 'white' : 'black',
-                  cursor: 'pointer', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '4px'
-                }}>
-                <span style={{ fontSize: '16px' }}>
-                  {tab === 'home' && '🏠'}
-                  {tab === 'appliance' && '🔌'}
-                  {tab === 'talk' && '🎙️'}
-                  {tab === 'ledger' && '📋'}
-                </span>
-                <span>{tab}</span>
-              </button>
-            )
+                onClick={() => setActiveTab(tab)}
+                className={`nav-item flex flex-col justify-center items-center ${activeTab === tab ? 'nav-active' : 'text-gray-600 bg-white'}`}
+              >
+                <i className={`fa-solid ${icon} mb-1`}></i>
+                <span className="text-[10px] font-bold">{t[labelKey]}</span>
+              </div>
+            );
           })}
         </div>
 

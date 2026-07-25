@@ -1,162 +1,169 @@
 import { useState, useRef, useEffect } from 'react';
-import { translateAudio } from '../services/api'; // Make sure this points to your API call
 
-const TranslatorView = () => {
-  const [isRecording, setIsRecording] = useState(false);
-  const [transcript, setTranscript] = useState('');
-  const [translation, setTranslation] = useState('');
-  const [targetLang, setTargetLang] = useState('hi'); // Default: Hindi
-  const recognitionRef = useRef(null);
+const TranslatorView = ({ t, lang, languageMap }) => {
+  const [chat, setChat] = useState([]);
+  const [activeMic, setActiveMic] = useState(null); 
+  const chatEndRef = useRef(null);
 
-  // Initialize Speech Recognition
-  // Initialize Speech Recognition
+  const workerLangName = languageMap[lang] ? languageMap[lang].toUpperCase() : 'ENGLISH';
+
   useEffect(() => {
+    chatEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+  }, [chat]);
+
+  const simulateWalkieTalkie = (speakerRole) => {
     const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-    if (SpeechRecognition) {
-      recognitionRef.current = new SpeechRecognition();
-      recognitionRef.current.continuous = false;
-      recognitionRef.current.interimResults = false;
-      recognitionRef.current.lang = 'en-US'; // Employer speaks English
 
-      recognitionRef.current.onresult = async (event) => {
-        const spokenText = event.results[0][0].transcript;
-        setTranscript(spokenText);
-        handleTranslation(spokenText, targetLang);
-      };
-
-      // NEW: Catch errors and alert you
-      recognitionRef.current.onerror = (event) => {
-        console.error("Microphone Error:", event.error);
-        if (event.error === 'not-allowed') {
-          alert("Microphone access is blocked! Please click the lock/mic icon in your URL bar and allow access.");
-        } else {
-          alert(`Speech recognition failed: ${event.error}`);
-        }
-        setIsRecording(false);
-      };
-
-      recognitionRef.current.onend = () => {
-        setIsRecording(false);
-      };
-    } else {
-      console.warn("Speech Recognition API is not supported in this browser.");
-      alert("Please open this app in Google Chrome for voice features to work.");
+    if (!SpeechRecognition) {
+      alert("Your browser does not support voice features. Try Chrome or Safari.");
+      return;
     }
-  }, [targetLang]);
 
-  const toggleRecording = () => {
-    if (isRecording) {
-      recognitionRef.current.stop();
-      setIsRecording(false);
+    const isWorker = speakerRole === 'worker';
+    const msgId = Date.now(); 
+    const speakerLabel = isWorker ? `WORKER (${workerLangName})` : "EMPLOYER (ENGLISH)";
+
+    setActiveMic(speakerRole);
+
+    // Add listening bubble
+    setChat(prev => [...prev, { id: msgId, type: 'listening', isWorker, speakerLabel }]);
+
+    const recognition = new SpeechRecognition();
+
+    if (isWorker) {
+      const langCodes = { 'hi': 'hi-IN', 'te': 'te-IN', 'kn': 'kn-IN', 'bn': 'bn-IN', 'ta': 'ta-IN', 'ml': 'ml-IN', 'en': 'en-IN' };
     } else {
-      setTranscript('');
-      setTranslation('');
-      recognitionRef.current.start();
-      setIsRecording(true);
+      recognition.lang = 'en-US';
     }
-  };
 
-  const handleTranslation = async (text, lang) => {
-    try {
-      // Assuming translateAudio in api.js is updated to send JSON { text, targetLang }
-      const response = await fetch('http://localhost:3000/api/voice/translate', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ text, targetLang: lang })
-      });
+    recognition.onresult = async (event) => {
+      const spokenText = event.results[0][0].transcript;
+      const ttsLang = isWorker ? 'en-US' : recognition.lang;
       
-      const data = await response.json();
-      if (data.translatedText) {
-        setTranslation(data.translatedText);
-        speakTranslation(data.translatedText, lang);
-      }
-    } catch (error) {
-      console.error("Translation failed", error);
-      setTranslation("⚠️ Error: Could not translate.");
-    }
-  };
+      // If worker speaks, translate to English ('en'). If employer speaks, translate to worker's language code (lang).
+      const targetLang = isWorker ? 'en' : lang;
 
-  const speakTranslation = (text, lang) => {
-    const utterance = new SpeechSynthesisUtterance(text);
-    utterance.lang = lang === 'hi' ? 'hi-IN' : lang === 'kn' ? 'kn-IN' : 'en-US';
-    window.speechSynthesis.speak(utterance);
+      // Show temporary loading state while Gemini translates
+      setChat(prev => prev.map(msg =>
+        msg.id === msgId ? { ...msg, type: 'result', spokenText, translatedText: "Translating via AI..." } : msg
+      ));
+
+      try {
+        // Send the text to your new backend endpoint
+        const res = await fetch('/api/translate', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ text: spokenText, targetLang })
+        });
+        
+        const data = await res.json();
+        const finalTranslation = data.translatedText || "Translation failed.";
+
+        // Update the UI with the real translation
+        setChat(prev => prev.map(msg =>
+          msg.id === msgId ? { ...msg, translatedText: finalTranslation } : msg
+        ));
+
+        // Play the translated text out loud
+        if ('speechSynthesis' in window) {
+          const utterance = new SpeechSynthesisUtterance(finalTranslation);
+          utterance.lang = ttsLang;
+          utterance.rate = 0.9;
+          window.speechSynthesis.speak(utterance);
+        }
+      } catch (error) {
+        setChat(prev => prev.map(msg =>
+          msg.id === msgId ? { ...msg, translatedText: "Network Error" } : msg
+        ));
+      }
+    };
+
+    recognition.onerror = (event) => {
+      setChat(prev => prev.map(msg =>
+        msg.id === msgId ? { ...msg, type: 'error', errorText: event.error } : msg
+      ));
+      setActiveMic(null);
+    };
+
+    recognition.onspeechend = () => {
+      recognition.stop();
+      setActiveMic(null);
+    };
+
+    try {
+      recognition.start();
+    } catch (error) {
+      setChat(prev => prev.map(msg =>
+        msg.id === msgId ? { ...msg, type: 'error', errorText: "Error starting mic." } : msg
+      ));
+      setActiveMic(null);
+    }
   };
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: '20px', paddingBottom: '20px' }}>
-      
-      <div className="brutal-box" style={{ cursor: 'default', backgroundColor: '#fff', textAlign: 'center' }}>
-        <h2 style={{ fontSize: '24px', fontWeight: '1000', color: '#b91c1c', textTransform: 'uppercase' }}>
-          DHWANI TRANSLATOR
-        </h2>
+    <div className="flex flex-col h-full max-h-full overflow-hidden pb-4">
+      {/* Header Box (Slightly reduced padding) */}
+      <div className="brutal-box p-3 bg-yellow-400 mb-2 shrink-0">
+        <h1 className="font-extrabold text-xl text-black">{t.nav_translator}</h1>
+        <p className="text-[10px] font-bold uppercase mt-1 text-gray-800">Walkie-Talkie Mode</p>
       </div>
 
-      {/* Controls Area */}
-      <div className="brutal-box" style={{ borderColor: '#4338ca', borderWidth: '5px', backgroundColor: '#fff' }}>
-        <p style={{ fontSize: '16px', fontWeight: '900', marginBottom: '12px' }}>Target Language:</p>
-        
-        <select 
-          value={targetLang} 
-          onChange={(e) => setTargetLang(e.target.value)}
-          style={{
-            width: '100%', padding: '12px', marginBottom: '20px',
-            border: '4px solid black', fontSize: '16px', fontWeight: '800',
-            backgroundColor: '#e0e7ff', cursor: 'pointer'
-          }}
-        >
-          <option value="hi">Hindi</option>
-          <option value="kn">Kannada</option>
-          <option value="ta">Tamil</option>
-          <option value="te">Telugu</option>
-        </select>
+      {/* Dynamic Chat Area (Takes up maximum available space) */}
+      <div className="flex-1 brutal-box p-4 bg-gray-50 overflow-y-auto mb-2 flex flex-col gap-3 min-h-0">
+        {chat.length === 0 ? (
+          <div className="text-center text-gray-400 text-sm font-bold mt-10">
+            <i className="fa-solid fa-walkie-talkie text-4xl mb-2"></i><br/>
+            <span>{t.mic_instruction}</span>
+          </div>
+        ) : (
+          chat.map((msg) => (
+            <div key={msg.id} className={`p-3 brutal-box ${msg.isWorker ? 'bg-teal-50 ml-6' : 'bg-blue-50 mr-6'} shadow-sm`}>
+              {msg.type === 'listening' && (
+                <p className="text-sm text-gray-500 italic">
+                  <i className="fa-solid fa-microphone fa-fade"></i> Listening...
+                </p>
+              )}
+              {msg.type === 'error' && (
+                <p className="text-sm text-red-500 font-bold">
+                  <i className="fa-solid fa-triangle-exclamation"></i> Error: {msg.errorText}
+                </p>
+              )}
+              {msg.type === 'result' && (
+                <>
+                  <p className="text-[10px] font-bold text-gray-500 mb-1">{msg.speakerLabel}</p>
+                  <p className="text-sm font-bold mb-2">"{msg.spokenText}"</p>
+                  <div className="border-t-2 border-black pt-2">
+                    <p className="text-[10px] font-bold text-green-600 mb-1">
+                      <i className="fa-solid fa-language"></i> TRANSLATION
+                    </p>
+                    <p className="text-md font-extrabold text-blue-900">"{msg.translatedText}"</p>
+                  </div>
+                </>
+              )}
+            </div>
+          ))
+        )}
+        <div ref={chatEndRef} />
+      </div>
 
-        <button 
-          onClick={toggleRecording}
-          style={{
-            width: '100%', padding: '24px',
-            backgroundColor: isRecording ? '#ef4444' : '#4338ca', // Red when recording, Indigo otherwise
-            color: 'white',
-            border: '5px solid black',
-            fontWeight: '1000', fontSize: '18px', textTransform: 'uppercase',
-            cursor: 'pointer',
-            boxShadow: isRecording ? 'none' : '6px 6px 0px black',
-            transform: isRecording ? 'translate(3px, 3px)' : 'none',
-            transition: 'all 0.1s ease',
-            display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '10px'
-        }}>
-          {isRecording ? '🛑 STOP RECORDING' : '🎙️ TAP TO SPEAK'}
+      {/* Microphone Buttons (Reduced size) */}
+      <div className="grid grid-cols-2 gap-2 shrink-0">
+        <button
+          onClick={() => simulateWalkieTalkie('worker')}
+          className={`brutal-btn p-2 flex flex-col items-center justify-center gap-1 h-16 ${activeMic === 'worker' ? 'mic-active' : 'bg-teal-600 text-white'}`}
+        >
+          <i className="fa-solid fa-microphone text-xl"></i>
+          <span className="font-bold text-[11px] uppercase text-center tracking-tight">SPEAK {workerLangName}</span>
+        </button>
+
+        <button
+          onClick={() => simulateWalkieTalkie('employer')}
+          className={`brutal-btn p-2 flex flex-col items-center justify-center gap-1 h-16 ${activeMic === 'employer' ? 'mic-active' : 'bg-blue-900 text-white'}`}
+        >
+          <i className="fa-solid fa-microphone text-xl"></i>
+          <span className="font-bold text-[11px] uppercase text-center tracking-tight">SPEAK ENGLISH</span>
         </button>
       </div>
-
-      {/* Results Area */}
-      {(transcript || translation) && (
-        <div style={{ 
-          display: 'flex', flexDirection: 'column', gap: '16px', 
-          border: '6px solid black', padding: '16px',
-          backgroundColor: '#f3f4f6',
-          boxShadow: '10px 10px 0px #4338ca' 
-        }}>
-          
-          <div style={{ backgroundColor: 'white', border: '4px solid black', padding: '12px' }}>
-            <p style={{ fontSize: '12px', fontWeight: '900', color: '#6b7280', textTransform: 'uppercase', marginBottom: '4px' }}>
-              You Said (English):
-            </p>
-            <p style={{ fontSize: '18px', fontWeight: '700', color: 'black' }}>
-              {transcript || '...'}
-            </p>
-          </div>
-
-          <div style={{ backgroundColor: '#fef08a', border: '4px solid black', padding: '12px' }}>
-            <p style={{ fontSize: '12px', fontWeight: '900', color: '#b45309', textTransform: 'uppercase', marginBottom: '4px' }}>
-              Translated Output:
-            </p>
-            <p style={{ fontSize: '20px', fontWeight: '900', color: 'black' }}>
-              {translation || 'Translating...'}
-            </p>
-          </div>
-
-        </div>
-      )}
     </div>
   );
 };
