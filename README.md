@@ -83,23 +83,19 @@ To get Griha-Mitra running locally on your machine, follow these steps using two
 ### Step 1: Initialize the Backend Server
 Open a terminal and navigate into the backend directory:
 ```
-Bash
 cd backend
 ```
 Install the required dependencies:
 ```
-Bash
 npm install
 ```
 Create a .env file inside the backend/ folder and add your API key:
+Code Snippet:
 ```
-Code snippet
 GEMINI_API_KEY=your_actual_gemini_api_key_here
 ```
 Start the server:
-
 ```
-Bash
 node server.js
 ```
 The server will boot up successfully on http://localhost:3000.
@@ -107,18 +103,16 @@ The server will boot up successfully on http://localhost:3000.
 ### Step 2: Initialize the Frontend Application
 Open a second terminal window and navigate into the frontend directory:
 ```
-Bash
 cd frontend
 ```
 
 Install the required dependencies:
-```Bash
+```
 npm install
 ```
 
 Start the Vite development server:
 ```
-Bash
 npm run dev
 ```
 Open your browser and navigate to http://localhost:5173.
