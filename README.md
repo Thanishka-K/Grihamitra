@@ -110,7 +110,14 @@ Install the required dependencies:
 ```
 npm install
 ```
-
+Install Tailwind CSS, PostCSS, and Autoprefixer (if setting up styling configurations)
+```
+npm install -D tailwindcss postcss autoprefixer
+```
+Install React Markdown for AI diagnosis formatting
+```
+npm install react-markdown
+```
 Start the Vite development server:
 ```
 npm run dev
