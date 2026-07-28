@@ -1,6 +1,7 @@
 # <div align="center">गृह-मित्र (GRIHA-MITRA) 🇮🇳</div>
 <div align="center">
-  <b>Empowering Domestic Workers & Households Through Multilingual Accessibility & AI Innovation</b>
+  <b>Empowering Domestic Workers & Households Through Multilingual Accessibility & AI Innovation </b>
+  <br>Project done by Thanishka ,Uma ,Tharuna ,Thanmayi
 </div>
 
 <br>
