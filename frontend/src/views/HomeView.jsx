@@ -1,11 +1,14 @@
-const HomeView = ({ setActiveTab, lang, setLang, t }) => {
+const HomeView = ({ setActiveTab, lang, setLang, t, userKey }) => {
   return (
-    <div className="block">
-      <div className="brutal-box p-4 flex justify-between items-center mb-6">
-        <div>
-          <h1 className="font-extrabold text-xl text-blue-900 tracking-tight">{t.app_title}</h1>
-          <p className="text-teal-600 text-xs font-bold uppercase tracking-wider">{t.companion}</p>
-        </div>
+    <div className="flex flex-col gap-4 pb-4">
+      {/* Warm Greeting Header Box */}
+      <div className="brutal-box p-4 bg-white text-center">
+        <h1 className="font-black text-lg text-teal-700 tracking-tight uppercase">
+          Hello, {userKey || "Friend"}! 👋
+        </h1>
+        <p className="text-[11px] font-bold text-gray-500 uppercase mt-1">
+          {t.app_subtitle || "Welcome back to your companion"}
+        </p>
       </div>
 
       <div className="brutal-box p-3 border-2 border-black">
