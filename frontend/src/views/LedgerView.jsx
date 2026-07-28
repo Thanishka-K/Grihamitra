@@ -1,20 +1,38 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
-const LedgerView = ({ t, lang }) => {
-  // Use textKey for default translations, and plain text for newly added items
-  const [tasks, setTasks] = useState([
-    { id: 1, textKey: 'task_1', completed: false },
-    { id: 2, textKey: 'task_2', completed: false },
-    { id: 3, textKey: 'task_3', completed: false }
-  ]);
+const LedgerView = ({ t, lang, userKey }) => {
+  const storageKey = `grihamitra_ledger_tasks_${userKey || 'default'}`;
+
+  const [tasks, setTasks] = useState(() => {
+    const saved = localStorage.getItem(storageKey);
+    return saved ? JSON.parse(saved) : [
+      { id: 1, textKey: 'task_1', completed: false },
+      { id: 2, textKey: 'task_2', completed: false },
+      { id: 3, textKey: 'task_3', completed: false }
+    ];
+  });
+
   const [newTask, setNewTask] = useState('');
-  const [isListening, setIsListening] = useState(false);
+
+  // Save tasks securely whenever they change
+  useEffect(() => {
+    localStorage.setItem(storageKey, JSON.stringify(tasks));
+  }, [tasks, storageKey]);
+
+  // Sync state if userKey changes
+  useEffect(() => {
+    const saved = localStorage.getItem(storageKey);
+    setTasks(saved ? JSON.parse(saved) : [
+      { id: 1, textKey: 'task_1', completed: false },
+      { id: 2, textKey: 'task_2', completed: false },
+      { id: 3, textKey: 'task_3', completed: false }
+    ]);
+  }, [storageKey]);
 
   const completedCount = tasks.filter(task => task.completed).length;
 
   const addTask = () => {
     if (newTask.trim() !== '') {
-      // New tasks don't have a translation key, just the raw text
       setTasks([...tasks, { id: Date.now(), text: newTask, completed: false }]);
       setNewTask('');
     }
@@ -26,36 +44,16 @@ const LedgerView = ({ t, lang }) => {
     ));
   };
 
-  const handleVoiceInput = () => {
-    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-    if (!SpeechRecognition) {
-      alert("Your browser does not support voice features.");
-      return;
-    }
-
-    const recognition = new SpeechRecognition();
-    const langCodes = { 'hi': 'hi-IN', 'te': 'te-IN', 'kn': 'kn-IN', 'bn': 'bn-IN', 'ta': 'ta-IN', 'ml': 'ml-IN', 'en': 'en-IN' };
-    recognition.lang = langCodes[lang] || 'en-US';
-
-    recognition.onstart = () => setIsListening(true);
-    
-    recognition.onresult = (event) => {
-      const spokenText = event.results[0][0].transcript;
-      setNewTask(spokenText);
-      setIsListening(false);
-    };
-    
-    recognition.onerror = () => setIsListening(false);
-    recognition.onspeechend = () => {
-      recognition.stop();
-      setIsListening(false);
-    };
-
-    recognition.start();
+  const deleteTask = (id, e) => {
+    e.stopPropagation();
+    setTasks(tasks.filter(task => task.id !== id));
   };
 
+  const activeTasks = tasks.filter(task => !task.completed);
+  const completedTasks = tasks.filter(task => task.completed);
+
   return (
-    <div className="flex flex-col h-full">
+    <div className="flex flex-col h-full overflow-y-auto no-scrollbar pb-4">
       <div className="brutal-box p-3 bg-white mb-4 shrink-0 text-center">
         <h1 className="font-extrabold text-xl text-teal-700 tracking-tight uppercase">
           {t.nav_ledger || "WORK LEDGER"}
@@ -78,15 +76,6 @@ const LedgerView = ({ t, lang }) => {
           placeholder={t.add_task || "Add a new task..."}
           className="flex-1 brutal-box mb-0 p-3 outline-none focus:bg-yellow-100 text-sm font-semibold"
         />
-        
-        <button 
-          onClick={handleVoiceInput}
-          className={`brutal-btn px-4 flex items-center justify-center transition-colors ${isListening ? 'mic-active' : 'bg-teal-600 text-white'}`}
-          title="Speak to add task"
-        >
-          <i className={`fa-solid fa-microphone ${isListening ? 'fa-fade' : ''}`}></i>
-        </button>
-
         <button 
           onClick={addTask}
           className="brutal-btn bg-black text-white px-5 font-bold text-xl flex items-center justify-center"
@@ -95,29 +84,79 @@ const LedgerView = ({ t, lang }) => {
         </button>
       </div>
 
-      <div className="flex-1 overflow-y-auto no-scrollbar flex flex-col gap-3 pb-2">
-        {tasks.map(task => {
-          // If the task has a textKey, translate it. Otherwise, render the custom text.
-          const displayText = task.textKey ? t[task.textKey] : task.text;
-
-          return (
-            <label 
-              key={task.id} 
-              className={`brutal-box mb-0 p-3 flex items-center gap-3 cursor-pointer transition-colors ${task.completed ? 'bg-gray-100' : 'bg-white'}`}
-            >
-              <input 
-                type="checkbox" 
-                checked={task.completed}
-                onChange={() => toggleTask(task.id)}
-                className="w-5 h-5 border-2 border-black accent-teal-600 cursor-pointer"
-              />
-              <span className={`font-bold text-sm ${task.completed ? 'line-through text-gray-400' : 'text-black'}`}>
-                {displayText}
-              </span>
-            </label>
-          );
-        })}
+      <div className="flex flex-col gap-3 mb-4">
+        <h3 className="text-xs font-extrabold text-gray-600 uppercase tracking-wide">Active Tasks</h3>
+        {activeTasks.length === 0 ? (
+          <div className="brutal-box p-3 bg-gray-50 text-center text-gray-400 text-xs font-bold">
+            No active tasks remaining! All done.
+          </div>
+        ) : (
+          activeTasks.map(task => {
+            const displayText = task.textKey ? (t[task.textKey] || task.textKey) : task.text;
+            return (
+              <div 
+                key={task.id} 
+                onClick={() => toggleTask(task.id)}
+                className="brutal-box mb-0 p-3 flex items-center justify-between cursor-pointer bg-white transition-colors"
+              >
+                <div className="flex items-center gap-3 flex-1">
+                  <input 
+                    type="checkbox" 
+                    checked={false}
+                    onChange={() => toggleTask(task.id)}
+                    className="w-5 h-5 border-2 border-black accent-teal-600 cursor-pointer"
+                  />
+                  <span className="font-bold text-sm text-black">
+                    {displayText}
+                  </span>
+                </div>
+                <button 
+                  onClick={(e) => deleteTask(task.id, e)}
+                  className="text-gray-400 hover:text-red-600 p-2 transition-colors"
+                >
+                  <i className="fa-solid fa-trash-can"></i>
+                </button>
+              </div>
+            );
+          })
+        )}
       </div>
+
+      {completedTasks.length > 0 && (
+        <div className="flex flex-col gap-3 mb-4">
+          <h3 className="text-xs font-extrabold text-teal-700 uppercase tracking-wide flex items-center gap-2">
+            <i className="fa-solid fa-circle-check"></i> Completed Tasks ({completedTasks.length})
+          </h3>
+          {completedTasks.map(task => {
+            const displayText = task.textKey ? (t[task.textKey] || task.textKey) : task.text;
+            return (
+              <div 
+                key={task.id} 
+                onClick={() => toggleTask(task.id)}
+                className="brutal-box mb-0 p-3 flex items-center justify-between cursor-pointer bg-gray-100 transition-colors"
+              >
+                <div className="flex items-center gap-3 flex-1">
+                  <input 
+                    type="checkbox" 
+                    checked={true}
+                    onChange={() => toggleTask(task.id)}
+                    className="w-5 h-5 border-2 border-black accent-teal-600 cursor-pointer"
+                  />
+                  <span className="font-bold text-sm line-through text-gray-400">
+                    {displayText}
+                  </span>
+                </div>
+                <button 
+                  onClick={(e) => deleteTask(task.id, e)}
+                  className="text-gray-400 hover:text-red-600 p-2 transition-colors"
+                >
+                  <i className="fa-solid fa-trash-can"></i>
+                </button>
+              </div>
+            );
+          })}
+        </div>
+      )}
     </div>
   );
 };
