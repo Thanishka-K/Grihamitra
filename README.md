@@ -72,6 +72,8 @@ grihamitra/
     ├── index.html            # Entry HTML embedded with FontAwesome icons
     ├── package.json          # Frontend dependencies (react, react-markdown)
     └── vite.config.js        # Vite configuration containing local proxy routing
+    └── postcss.config.js
+    └── tailwind.config.js      
 ```
 
 ## 🚀 Quick Start & Execution Guide
