@@ -8,7 +8,16 @@ export const dictionary = {
         btn_how_to_use: "HOW TO USE", btn_fault_fix: "FAULT FIX", manual_how_to_1: "Plug in the power cord securely.", manual_fault_1: "Unplug fridge and clear vents.",
         total_earnings: "TOTAL EARNINGS", mic_instruction: "Press a microphone to speak",
         daily_progress: "DAILY PROGRESS", tasks_done: "TASKS DONE", add_task: "Add a new task...",
-        task_1: "Clean kitchen countertops", task_2: "Run the washing machine", task_3: "Sweep and mop living room"
+        task_1: "Clean kitchen countertops", task_2: "Run the washing machine", task_3: "Sweep and mop living room",
+        nav_resume: "Resume", 
+        default_profession: "Experienced Household Caretaker",
+        default_bio: "Professional and reliable household caretaker with extensive experience in residential housekeeping, deep cleaning, and meal preparation.",
+        skill_cooking: "Cooking",
+        skill_cleaning: "Cleaning",
+        skill_laundry: "Laundry",
+        skill_child: "Child Care",
+        skill_elder: "Elder Care",
+        skill_dish: "Dishwashing"
     },
     hi: {
         app_title: "गृह-मित्र", companion: "साथी", global_lang: "वैश्विक भाषा",
@@ -19,7 +28,15 @@ export const dictionary = {
         btn_how_to_use: "उपयोग कैसे करें", btn_fault_fix: "खराबी ठीक करें", manual_how_to_1: "पावर कॉर्ड को ठीक से प्लग करें।", manual_fault_1: "फ्रिज का प्लग निकालें और वेंट्स साफ करें।",
         total_earnings: "कुल कमाई", mic_instruction: "बोलने के लिए माइक्रोफ़ोन दबाएं",
         daily_progress: "दैनिक प्रगति", tasks_done: "कार्य पूर्ण", add_task: "नया कार्य जोड़ें...",
-        task_1: "किचन काउंटरटॉप्स साफ करें", task_2: "वाशिंग मशीन चलाएं", task_3: "लिविंग रूम में झाड़ू और पोंछा लगाएं"
+        task_1: "किचन काउंटरटॉप्स साफ करें", task_2: "वाशिंग मशीन चलाएं", task_3: "लिविंग रूम में झाड़ू और पोंछा लगाएं",
+        nav_resume: "रिज़्यूमे",
+        default_profession: "अनुभवी घरेलू देखभालकर्ता",
+        default_bio: "पेशेवर और विश्वसनीय घरेलू देखभालकर्ता, जो आवासीय हाउसकीपिंग, गहन सफाई और भोजन तैयारी में व्यापक अनुभव रखता है।",
+        skill_cooking: "खाना बनाना",
+        skill_cleaning: "साफ़ करना",
+        skill_child: "बच्चा सेवा",
+        skill_elder: "बच्चा सेवा",      
+        skill_dish: "डिशवॉशिंग"
     },
     bn: {
         app_title: "গৃহ-মিত্র", companion: "সঙ্গী", global_lang: "বিশ্বব্যাপী ভাষা",
@@ -30,7 +47,14 @@ export const dictionary = {
         btn_how_to_use: "কিভাবে ব্যবহার করবেন", btn_fault_fix: "ত্রুটি ঠিক করুন", manual_how_to_1: "পাওয়ার কর্ডটি নিরাপদে প্লাগ করুন।", manual_fault_1: "ফ্রিজ আনপ্লাগ করুন এবং ভেন্ট পরিষ্কার করুন।",
         total_earnings: "মোট আয়", mic_instruction: "কথা বলতে মাইক্রোফোন টিপুন",
         daily_progress: "দৈনিক অগ্রগতি", tasks_done: "কাজ সম্পন্ন", add_task: "নতুন কাজ যোগ করুন...",
-        task_1: "রান্নাঘরের কাউন্টারটপ পরিষ্কার করুন", task_2: "ওয়াশিং মেশিন চালান", task_3: "বসার ঘর ঝাড়ু দিন এবং মুছুন"
+        task_1: "রান্নাঘরের কাউন্টারটপ পরিষ্কার করুন", task_2: "ওয়াশিং মেশিন চালান", task_3: "বসার ঘর ঝাড়ু দিন এবং মুছুন",
+        nav_resume: "রিজিউমে",
+        default_profession: "অভিজ্ঞ গৃহ পরিচারিকা",
+        default_bio: "পেশাদার এবং নির্ভরযোগ্য গৃহ পরিচারিকা, যিনি আবাসিক হাউসকিপিং, গভীর পরিষ্কার এবং খাবার প্রস্তুতিতে বিস্তৃত অভিজ্ঞতা অর্জন করেছেন।",
+        skill_cooking: "রান্না",
+        skill_maintenance: "পরিষ্কার",
+
+
     },
     te: {
         app_title: "గృహ-మిత్ర", companion: "సహచరుడు", global_lang: "ప్రపంచ భాష",
@@ -41,7 +65,8 @@ export const dictionary = {
         btn_how_to_use: "ఎలా ఉపయోగించాలి", btn_fault_fix: "లోపం పరిష్కారం", manual_how_to_1: "పవర్ త్రాడును ప్లగ్ చేయండి.", manual_fault_1: "ఫ్రిజ్ ప్లగ్ తీసి వెంట్లను శుభ్రం చేయండి.",
         total_earnings: "మొత్తం సంపాదన", mic_instruction: "మాట్లాడటానికి మైక్రోఫోన్‌ను నొక్కండి",
         daily_progress: "రోజువారీ పురోగతి", tasks_done: "పనులు పూర్తయ్యాయి", add_task: "కొత్త పనిని జోడించండి...",
-        task_1: "వంటగది కౌంటర్‌టాప్‌లను శుభ్రం చేయండి", task_2: "వాషింగ్ మెషీన్ ఆన్ చేయండి", task_3: "లివింగ్ రూమ్ ఊడ్చి తుడవండి"
+        task_1: "వంటగది కౌంటర్‌టాప్‌లను శుభ్రం చేయండి", task_2: "వాషింగ్ మెషీన్ ఆన్ చేయండి", task_3: "లివింగ్ రూమ్ ఊడ్చి తుడవండి",
+        nav_resume: "రిజ్యూమ్"
     },
     kn: {
         app_title: "ಗೃಹ-ಮಿತ್ರ", companion: "ಸಂಗಾತಿ", global_lang: "ಜಾಗತಿಕ ಭಾಷೆ",
@@ -52,7 +77,16 @@ export const dictionary = {
         btn_how_to_use: "ಹೇಗೆ ಬಳಸುವುದು", btn_fault_fix: "ದೋಷ ಪರಿಹಾರ", manual_how_to_1: "ಪವರ್ ಕಾರ್ಡ್ ಪ್ಲಗ್ ಮಾಡಿ.", manual_fault_1: "ಫ್ರಿಡ್ಜ್ ಅನ್ಪ್ಲಗ್ ಮಾಡಿ.",
         total_earnings: "ಒಟ್ಟು ಗಳಿಕೆ", mic_instruction: "ಮಾತನಾಡಲು ಮೈಕ್ರೊಫೋನ್ ಒತ್ತಿರಿ",
         daily_progress: "ದೈನಂದಿನ ಪ್ರಗತಿ", tasks_done: "ಕಾರ್ಯಗಳು ಪೂರ್ಣಗೊಂಡಿವೆ", add_task: "ಹೊಸ ಕಾರ್ಯವನ್ನು ಸೇರಿಸಿ...",
-        task_1: "ಅಡುಗೆಮನೆ ಕೌಂಟರ್‌ಟಾಪ್‌ಗಳನ್ನು ಸ್ವಚ್ಛಗೊಳಿಸಿ", task_2: "ವಾಷಿಂಗ್ ಮೆಷಿನ್ ಆನ್ ಮಾಡಿ", task_3: "ಲಿವಿಂಗ್ ರೂಮ್ ಗುಡಿಸಿ ಮತ್ತು ಒರೆಸಿ"
+        task_1: "ಅಡುಗೆಮನೆ ಕೌಂಟರ್‌ಟಾಪ್‌ಗಳನ್ನು ಸ್ವಚ್ಛಗೊಳಿಸಿ", task_2: "ವಾಷಿಂಗ್ ಮೆಷಿನ್ ಆನ್ ಮಾಡಿ", task_3: "ಲಿವಿಂಗ್ ರೂಮ್ ಗುಡಿಸಿ ಮತ್ತು ಒರೆಸಿ",
+        nav_resume: "ರಿಜ್ಯೂಮ್",
+        default_profession: "अनुभवी गृह देखभालकर्ता",
+        default_bio: "ಮನೆ ಸ್ವಚ್ಛಗೊಳಿಸುವಿಕೆ, ಆಳವಾದ ಶುಚಿಗೊಳಿಸುವಿಕೆ ಮತ್ತು ಆಹಾರ ತಯಾರಿಕೆಯಲ್ಲಿ ಅಪಾರ ಅನುಭವವಿರುವ ವೃತ್ತಿಪರ ಮತ್ತು ವಿಶ್ವಾಸಾರ್ಹ ಸಹಾಯಕ.",
+        skill_cooking: "ಅಡುಗೆ",
+        skill_cleaning: "ಸ್ವಚ್ಛಗೊಳಿಸುವಿಕೆ",
+        skill_laundry: "ಬಟ್ಟೆ ಒಗೆಯುವುದು",
+        skill_child: "ಮಕ್ಕಳ ಆರೈಕೆ",
+        skill_elder: "ಹಿರಿಯರ ಆರೈಕೆ",
+        skill_dish: "ಪಾತ್ರೆ ತೊಳೆಯುವುದು"
     },
     ta: {
         app_title: "க்ருஹ-மித்ரா", companion: "துணை", global_lang: "உலகளாவிய மொழி",
@@ -63,7 +97,8 @@ export const dictionary = {
         btn_how_to_use: "எப்படி பயன்படுத்துவது", btn_fault_fix: "பழுது நீக்கு", manual_how_to_1: "மின் கம்பியை சரியாக செருகவும்.", manual_fault_1: "பிரிட்ஜை அன்ப்ளக் செய்து வென்ட்களை சுத்தம் செய்யவும்.",
         total_earnings: "மொத்த வருவாய்", mic_instruction: "பேச மைக்ரோஃபோனை அழுத்தவும்",
         daily_progress: "தினசரி முன்னேற்றம்", tasks_done: "முடிக்கப்பட்ட வேலைகள்", add_task: "புதிய வேலையைச் சேர்க்கவும்...",
-        task_1: "சமையலறை மேடைகளை சுத்தம் செய்", task_2: "வாஷிங் மெஷினை இயக்கவும்", task_3: "வரவேற்பறையை கூட்டி துடைக்கவும்"
+        task_1: "சமையலறை மேடைகளை சுத்தம் செய்", task_2: "வாஷிங் மெஷினை இயக்கவும்", task_3: "வரவேற்பறையை கூட்டி துடைக்கவும்",
+        nav_resume: "குறிப்பு"
     },
     ml: {
         app_title: "ഗൃഹ-മിത്ര", companion: "സഹായി", global_lang: "ആഗോള ഭാഷ",
@@ -74,7 +109,8 @@ export const dictionary = {
         btn_how_to_use: "എങ്ങനെ ഉപയോഗിക്കാം", btn_fault_fix: "തകരാർ പരിഹരിക്കുക", manual_how_to_1: "പവർ കോർഡ് സുരക്ഷിതമായി പ്ലഗ് ചെയ്യുക.", manual_fault_1: "ഫ്രിഡ്ജ് അൺപ്ലഗ് ചെയ്ത് വെന്റുകൾ വൃത്തിയാക്കുക.",
         total_earnings: "മൊത്തം വരുമാനം", mic_instruction: "സംസാരിക്കാൻ മൈക്രോഫോൺ അമർത്തുക",
         daily_progress: "പ്രതിദിന പുരോഗതി", tasks_done: "ജോലികൾ പൂർത്തിയായി", add_task: "പുതിയ ടാസ്ക് ചേർക്കുക...",
-        task_1: "അടുക്കള കൗണ്ടർടോപ്പുകൾ വൃത്തിയാക്കുക", task_2: "വാഷിംഗ് മെഷീൻ പ്രവർത്തിപ്പിക്കുക", task_3: "സ്വീകരണമുറി അടിച്ചുവാരി തുടയ്ക്കുക"
+        task_1: "അടുക്കള കൗണ്ടർടോപ്പുകൾ വൃത്തിയാക്കുക", task_2: "വാഷിംഗ് മെഷീൻ പ്രവർത്തിപ്പിക്കുക", task_3: "സ്വീകരണമുറി അടിച്ചുവാരി തുടയ്ക്കുക",
+        nav_resume: "റിസ്യൂം"
     }
 };
 
