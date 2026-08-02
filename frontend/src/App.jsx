@@ -6,6 +6,7 @@ import TranslatorView from './views/TranslatorView';
 import LedgerView from './views/LedgerView';
 import { dictionary, languageMap } from './translations';
 import logoImg from './assets/logo.jpeg';
+import ResumeView from './views/ResumeView';
 
 function App() {
   const [currentUser, setCurrentUser] = useState(() => {
@@ -63,6 +64,7 @@ function App() {
               {activeTab === 'appliance' && <ApplianceView t={t} lang={lang} userKey={currentUser} />}
               {activeTab === 'translator' && <TranslatorView t={t} lang={lang} languageMap={languageMap} />}
               {activeTab === 'ledger' && <LedgerView t={t} lang={lang} userKey={currentUser} />}
+              {activeTab === 'resume' && <ResumeView t={t} lang={lang} userKey={currentUser} />}
             </div>
 
             {/* Copyright Footer */}
@@ -72,7 +74,7 @@ function App() {
 
             {/* Bottom Navigation Bar */}
             <div className="absolute bottom-0 w-full bg-white border-t-[4px] border-black flex h-[70px] z-40">
-              {['home', 'appliance', 'translator', 'ledger'].map((tab) => {
+              {['home', 'appliance', 'translator', 'ledger','resume'].map((tab) => {
                 const isHome = tab === 'home';
                 const icon = isHome ? 'fa-house' : tab === 'appliance' ? 'fa-plug' : tab === 'translator' ? 'fa-walkie-talkie' : 'fa-book';
                 const labelKey = isHome ? 'nav_home' : `nav_${tab}`;
